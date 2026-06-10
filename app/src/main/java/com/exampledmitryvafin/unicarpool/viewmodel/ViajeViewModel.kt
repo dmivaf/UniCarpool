@@ -99,4 +99,11 @@ class ViajeViewModel(
             }
         }
     }
+
+    // En ViajeViewModel.kt
+    fun updateCompletedViajes(fecha: String, hora: String) {
+        viewModelScope.launch {
+            viajeRepository.updateCompletedViajes(fecha, hora)
+        }
+    }
 }

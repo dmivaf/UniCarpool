@@ -188,6 +188,7 @@ class RideDetailViewModel(
         }
     }
 
+    // Dentro de RideDetailViewModel.kt
     fun cancelRide(rideId: Long, description: String, onResult: (Boolean, String) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
@@ -196,10 +197,11 @@ class RideDetailViewModel(
                     onResult(false, "Solo el conductor puede cancelar")
                     return@launch
                 }
+                // Cambiar estado a cancelado, pero NO eliminar participaciones
                 viajeRepository.cancelarViaje(rideId, description)
-                participacionRepository.deleteByViajeId(rideId) // Eliminar todas las participaciones
-                _successMessage.value = "Viaje cancelado"
+                _successMessage.value = "Viaje cancelado correctamente"
                 onResult(true, "Cancelado")
+                loadRideDetail(rideId) // recargar para reflejar nuevo estado
             } catch (e: Exception) {
                 _errorMessage.value = e.message
                 onResult(false, e.message ?: "Error")

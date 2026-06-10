@@ -94,4 +94,11 @@ class ViajeRepository(private val viajeDao: ViajeDao) {
     ): Boolean {
         return viajeDao.hasOverlappingRide(conductorId, fechaSalida, horaSalida, horaLlegada)
     }
+
+    // En ViajeRepository.kt
+
+    suspend fun updateCompletedViajes(fechaActual: String, horaActual: String) {
+        viajeDao.updateCompletedViajes(fechaActual, horaActual)
+    }
+
 }

@@ -93,4 +93,19 @@ interface ParticipacionDao {
         horaSalida: String,
         horaLlegada: String
     ): Boolean
+
+    // En ParticipacionDao.kt
+
+    @Query("""
+    SELECT p.* FROM participaciones p
+    JOIN viajes v ON p.id_viaje = v.id_viaje
+    WHERE p.id_usuario = :usuarioId 
+    AND p.estado_participacion = 'activa'
+    AND v.estado IN ('activo', 'completado', 'cancelado')
+    ORDER BY v.fecha_salida, v.hora_salida
+""")
+    fun getParticipacionesActivasWithViaje(usuarioId: Long): Flow<List<Participacion>>
+
+    @Query("DELETE FROM participaciones WHERE id_usuario = :usuarioId AND id_viaje = :viajeId")
+    suspend fun deleteParticipacionByUserAndRide(usuarioId: Long, viajeId: Long)
 }
