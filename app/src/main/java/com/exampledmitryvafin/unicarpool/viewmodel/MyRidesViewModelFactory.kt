@@ -10,7 +10,6 @@ class MyRidesViewModelFactory(
     private val participacionRepository: ParticipacionRepository,
     private val currentUserId: Long
 ) : ViewModelProvider.Factory {
-
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MyRidesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")

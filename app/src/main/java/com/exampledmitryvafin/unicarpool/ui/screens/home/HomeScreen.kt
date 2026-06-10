@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.sp
 import com.exampledmitryvafin.unicarpool.data.entity.Viaje
 import com.exampledmitryvafin.unicarpool.ui.components.DatePickerDialog
 import com.exampledmitryvafin.unicarpool.viewmodel.ViajeViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,6 +32,15 @@ fun HomeScreen(
 ) {
     val viajes by viajeViewModel.viajesDisponibles.collectAsState()
     val isLoading by viajeViewModel.isLoading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val timeSdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val now = Date()
+        val fechaActual = sdf.format(now)
+        val horaActual = timeSdf.format(now)
+        viajeViewModel.updateCompletedViajes(fechaActual, horaActual)
+    }
 
     // Estados de filtros
     val origen by viajeViewModel.origenBusqueda.collectAsState()

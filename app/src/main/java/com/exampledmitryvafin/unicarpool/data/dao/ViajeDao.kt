@@ -86,4 +86,15 @@ interface ViajeDao {
         horaSalida: String,
         horaLlegada: String
     ): Boolean
+
+    // En ViajeDao.kt
+
+    @Query("""
+    UPDATE viajes SET estado = 'completado'
+    WHERE estado = 'activo' AND (
+        fecha_llegada < :fechaActual OR 
+        (fecha_llegada = :fechaActual AND hora_llegada <= :horaActual)
+    )
+""")
+    suspend fun updateCompletedViajes(fechaActual: String, horaActual: String)
 }

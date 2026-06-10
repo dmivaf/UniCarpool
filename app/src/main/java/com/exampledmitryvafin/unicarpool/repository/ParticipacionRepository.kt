@@ -83,4 +83,14 @@ class ParticipacionRepository(private val participacionDao: ParticipacionDao) {
     ): Boolean {
         return participacionDao.hasOverlappingPassengerRideForConductor(usuarioId, fechaSalida, horaSalida, horaLlegada)
     }
+
+    // En ParticipacionRepository.kt
+
+    fun getParticipacionesActivasWithViaje(usuarioId: Long): Flow<List<Participacion>> {
+        return participacionDao.getParticipacionesActivasWithViaje(usuarioId)
+    }
+
+    suspend fun deleteParticipacionByUserAndRide(usuarioId: Long, viajeId: Long) {
+        participacionDao.deleteParticipacionByUserAndRide(usuarioId, viajeId)
+    }
 }
