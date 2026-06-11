@@ -25,4 +25,7 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM usuarios WHERE id_usuario = :userId")
     suspend fun getUserById(userId: Long): Usuario?
+
+    @Query("UPDATE usuarios SET contrasena = :newPassword WHERE id_usuario = :userId")
+    suspend fun updatePassword(userId: Long, newPassword: String)
 }

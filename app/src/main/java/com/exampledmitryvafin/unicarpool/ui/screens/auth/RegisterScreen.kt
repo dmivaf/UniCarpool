@@ -22,6 +22,8 @@ fun RegisterScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var securityQuestion by remember { mutableStateOf("") }
+    var securityAnswer by remember { mutableStateOf("") }
     var showError by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
@@ -100,6 +102,29 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // ... después de confirmPassword
+        OutlinedTextField(
+            value = securityQuestion,
+            onValueChange = { securityQuestion = it },
+            label = { Text("Pregunta de seguridad") },
+            placeholder = { Text("Ej: ¿Nombre de tu primera mascota?") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = securityAnswer,
+            onValueChange = { securityAnswer = it },
+            label = { Text("Respuesta de seguridad") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true
+        )
+
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         // Botón de registro
         Button(
             onClick = {
@@ -110,7 +135,7 @@ fun RegisterScreen(
                     return@Button
                 }
 
-                authViewModel.registerUser(name, email, password) { success, message ->
+                authViewModel.registerUser(name, email, password, securityQuestion, securityAnswer) { success, message ->
                     if (success) {
                         onRegisterSuccess()
                     } else {

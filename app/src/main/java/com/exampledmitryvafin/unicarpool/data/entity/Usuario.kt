@@ -9,7 +9,9 @@ data class Usuario(
     val id_usuario: Long = 0,
     val nombre: String,
     val correo: String,
-    val contrasena: String,  // En versión futura se encriptará
-    val fecha_registro: String
+    val contrasena: String,
+    val fecha_registro: String,
+    val preguntaSeguridad: String = "",   // NUEVO
+    val respuestaSeguridad: String = ""   // NUEVO (en producción habría que hashear)
 )
 

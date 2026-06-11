@@ -34,4 +34,8 @@ class UsuarioRepository(private val usuarioDao: UsuarioDao) {
     suspend fun getUserById(userId: Long): Usuario? {
         return usuarioDao.getUserById(userId)
     }
+
+    suspend fun updatePassword(userId: Long, newPassword: String) {
+        usuarioDao.updatePassword(userId, newPassword)
+    }
 }
