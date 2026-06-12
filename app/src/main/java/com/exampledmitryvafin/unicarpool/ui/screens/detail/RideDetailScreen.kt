@@ -165,7 +165,7 @@ fun RideDetailScreen(
                         // Fechas y horas
                         InfoRow("📅 Fecha salida:", "${viaje!!.fecha_salida} ${viaje!!.hora_salida}")
                         InfoRow("📍 Fecha llegada:", "${viaje!!.fecha_llegada} ${viaje!!.hora_llegada}")
-                        InfoRow("👤 Conductor:", "ID: ${viaje!!.nombre_conductor}")
+                        InfoRow("👤 Conductor:", "${viaje!!.nombre_conductor}")
                         InfoRow("💰 Precio:", "${viaje!!.precio}€ por persona")
 
                         Spacer(modifier = Modifier.height(8.dp))

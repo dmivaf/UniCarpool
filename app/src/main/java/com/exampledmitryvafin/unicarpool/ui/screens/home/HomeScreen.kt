@@ -170,7 +170,6 @@ fun HomeScreen(
                     )
 
                     // Plazas disponibles mínimas
-                    Text("Plazas disponibles:", style = MaterialTheme.typography.labelMedium)
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)

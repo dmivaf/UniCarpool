@@ -121,6 +121,12 @@ fun NavGraph(
 
         // Pantalla principal con BottomNavigation (SOLO ESTA RUTA)
         composable(Destinations.Home.route) {
+            val userId by authViewModel.currentUserId.collectAsState()
+            // Forzar una nueva instancia de ViajeViewModel por cada userId
+            val viajeViewModel: ViajeViewModel = viewModel(
+                key = "viajeViewModel_$userId",   // Clave única por usuario
+                factory = ViajeViewModelFactory(viajeRepository)
+            )
             MainScreenWithBottomBar(
                 navController = navController,
                 viajeViewModel = viajeViewModel,

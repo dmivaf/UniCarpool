@@ -11,14 +11,14 @@ data class Viaje(
     val nombre_conductor: String,
     val origen: String,
     val destino: String,
-    val fecha_salida: String,      // "2024-01-25"
-    val hora_salida: String,       // "15:30"
-    val fecha_llegada: String,     // "2024-01-25"
-    val hora_llegada: String,      // "16:45"
+    val fecha_salida: String,
+    val hora_salida: String,
+    val fecha_llegada: String,
+    val hora_llegada: String,
     val plazas_totales: Int,
     val plazas_disponibles: Int,
-    val estado: String,             // "activo", "completado", "cancelado"
+    val estado: String,
     val descripcion_cancelacion: String = "",
-    val precio: Double = 0.0,      // AÑADE ESTE CAMPO SI NO LO TIENES
+    val precio: Double = 0.0,
     val created_at: String = ""
 )

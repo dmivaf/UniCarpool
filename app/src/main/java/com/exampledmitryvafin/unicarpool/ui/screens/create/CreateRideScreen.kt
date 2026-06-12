@@ -1,5 +1,6 @@
 package com.exampledmitryvafin.unicarpool.ui.screens.create
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.exampledmitryvafin.unicarpool.repository.ParticipacionRepository
@@ -27,7 +29,7 @@ fun CreateRideScreen(
     val database = com.exampledmitryvafin.unicarpool.data.database.AppDatabase.getInstance(context)
     val viajeRepository = com.exampledmitryvafin.unicarpool.repository.ViajeRepository(database.viajeDao())
     val participacionRepository = ParticipacionRepository(database.participacionDao())  // NUEVO
-
+    val focusManager = LocalFocusManager.current
 
     val viewModel: CreateRideViewModel = viewModel(
         factory = CreateRideViewModelFactory(viajeRepository, participacionRepository, currentUserId, currentUserName)
@@ -52,6 +54,15 @@ fun CreateRideScreen(
     var showTimePickerLlegada by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
     var currentErrorMessage by remember { mutableStateOf("") }
+
+    var errorOrigen by remember { mutableStateOf<String?>(null) }
+    var errorDestino by remember { mutableStateOf<String?>(null) }
+    var errorFechaSalida by remember { mutableStateOf<String?>(null) }
+    var errorHoraSalida by remember { mutableStateOf<String?>(null) }
+    var errorFechaLlegada by remember { mutableStateOf<String?>(null) }
+    var errorHoraLlegada by remember { mutableStateOf<String?>(null) }
+    var errorPlazas by remember { mutableStateOf<String?>(null) }
+    var errorPrecio by remember { mutableStateOf<String?>(null) }
 
     // Observar cambios en errorMessage
     LaunchedEffect(errorMessage) {
@@ -167,20 +178,20 @@ fun CreateRideScreen(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        Text(
-            text = "Completa los datos para compartir tu viaje",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Spacer(modifier = Modifier.height(2.dp))
-
         // Origen
         OutlinedTextField(
             value = origen,
-            onValueChange = { viewModel.updateOrigen(it) },
+            onValueChange = { viewModel.updateOrigen(it)
+                            errorOrigen = null
+                            },
             label = { Text("Origen") },
-            placeholder = { Text("Ej: Plaza Mayor, Madrid") },
+            isError = errorOrigen != null,
+            supportingText = {
+                if (errorOrigen != null) {
+                    Text(errorOrigen!!, color = MaterialTheme.colorScheme.error)
+                }
+            },
+            placeholder = { Text("Ej: Avenida de Francia 30, Valencia") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
@@ -188,17 +199,18 @@ fun CreateRideScreen(
         // Destino
         OutlinedTextField(
             value = destino,
-            onValueChange = { viewModel.updateDestino(it) },
+            onValueChange = { viewModel.updateDestino(it)
+                            errorDestino = null},
             label = { Text("Destino") },
-            placeholder = { Text("Ej: Universidad Complutense") },
+            isError = errorDestino != null,
+            supportingText = {
+                if (errorDestino != null) {
+                    Text(errorDestino!!, color = MaterialTheme.colorScheme.error)
+                }
+            },
+            placeholder = { Text("Ej: Universidad Politecnica de Valencia") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
-        )
-
-        // Fecha y Hora de Salida
-        Text(
-            text = "Fecha y hora de salida",
-            style = MaterialTheme.typography.titleSmall
         )
 
         Row(
@@ -207,8 +219,17 @@ fun CreateRideScreen(
         ) {
             OutlinedTextField(
                 value = fechaSalida,
-                onValueChange = {},
-                label = { Text("Fecha") },
+                onValueChange = {
+                    viewModel.updateFechaSalida(it)
+                    errorFechaSalida = null
+                },
+                label = { Text("Fecha de salida") },
+                isError = errorFechaSalida != null,
+                supportingText = {
+                    if (errorFechaSalida != null) {
+                        Text(errorFechaSalida!!, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 placeholder = { Text("YYYY-MM-DD") },
                 modifier = Modifier.weight(1f),
                 readOnly = true,
@@ -221,8 +242,17 @@ fun CreateRideScreen(
 
             OutlinedTextField(
                 value = horaSalida,
-                onValueChange = {},
-                label = { Text("Hora") },
+                onValueChange = {
+                    viewModel.updateHoraSalida(it)
+                    errorHoraSalida = null
+                },
+                label = { Text("Hora de salida") },
+                isError = errorHoraSalida != null,
+                supportingText = {
+                    if (errorHoraSalida != null) {
+                        Text(errorHoraSalida!!, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 placeholder = { Text("HH:MM") },
                 modifier = Modifier.weight(1f),
                 readOnly = true,
@@ -234,20 +264,23 @@ fun CreateRideScreen(
             )
         }
 
-        // Fecha y Hora de Llegada
-        Text(
-            text = "Fecha y hora de llegada prevista",
-            style = MaterialTheme.typography.titleSmall
-        )
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             OutlinedTextField(
                 value = fechaLlegada,
-                onValueChange = {},
-                label = { Text("Fecha") },
+                onValueChange = {
+                    viewModel.updateFechaLlegada(it)
+                    errorFechaLlegada = null
+                },
+                label = { Text("Fecha de llegada") },
+                isError = errorFechaLlegada != null,
+                supportingText = {
+                    if (errorFechaLlegada != null) {
+                        Text(errorFechaLlegada!!, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 placeholder = { Text("YYYY-MM-DD") },
                 modifier = Modifier.weight(1f),
                 readOnly = true,
@@ -260,8 +293,17 @@ fun CreateRideScreen(
 
             OutlinedTextField(
                 value = horaLlegada,
-                onValueChange = {},
-                label = { Text("Hora") },
+                onValueChange = {
+                    viewModel.updateHoraLlegada(it)
+                    errorHoraLlegada = null
+                },
+                label = { Text("Hora de llegada") },
+                isError = errorHoraLlegada != null,
+                supportingText = {
+                    if (errorHoraLlegada != null) {
+                        Text(errorHoraLlegada!!, color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 placeholder = { Text("HH:MM") },
                 modifier = Modifier.weight(1f),
                 readOnly = true,
@@ -276,8 +318,15 @@ fun CreateRideScreen(
         // Plazas
         OutlinedTextField(
             value = plazas,
-            onValueChange = { viewModel.updatePlazas(it) },
+            onValueChange = { viewModel.updatePlazas(it)
+                            errorPlazas = null},
             label = { Text("Plazas disponibles") },
+            isError = errorPlazas != null,
+            supportingText = {
+                if (errorPlazas != null) {
+                    Text(errorPlazas!!, color = MaterialTheme.colorScheme.error)
+                }
+            },
             placeholder = { Text("Ej: 3") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -289,8 +338,15 @@ fun CreateRideScreen(
         // Precio
         OutlinedTextField(
             value = precio,
-            onValueChange = { viewModel.updatePrecio(it) },
+            onValueChange = { viewModel.updatePrecio(it)
+                            errorPrecio = null},
             label = { Text("Precio por pasajero (€)") },
+            isError = errorPrecio != null,
+            supportingText = {
+                if (errorPrecio != null) {
+                    Text(errorPrecio!!, color = MaterialTheme.colorScheme.error)
+                }
+            },
             placeholder = { Text("Ej: 5.50") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
@@ -299,19 +355,88 @@ fun CreateRideScreen(
             )
         )
 
-        Spacer(modifier = Modifier.height(15.dp))
-
         // Botón de publicar
         Button(
-            onClick = { viewModel.createRide { _, _ -> } },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(24.dp))
-            } else {
-                Text("Publicar viaje")
+            onClick = {
+                // Reiniciar errores
+                errorOrigen = null
+                errorDestino = null
+                errorFechaSalida = null
+                errorHoraSalida = null
+                errorFechaLlegada = null
+                errorHoraLlegada = null
+                errorPlazas = null
+                errorPrecio = null
+
+                var hasError = false
+
+                if (origen.isBlank()) {
+                    errorOrigen = "El origen es obligatorio"
+                    hasError = true
+                }
+                if (destino.isBlank()) {
+                    errorDestino = "El destino es obligatorio"
+                    hasError = true
+                }
+                if (fechaSalida.isBlank()) {
+                    errorFechaSalida = "La fecha de salida es obligatoria"
+                    hasError = true
+                }
+
+                if (fechaSalida<fechaLlegada) {
+                    errorFechaSalida = "La fecha de salida no puede ser anterior a la fecha de llegada"
+                    hasError = true
+                }
+                if (horaSalida.isBlank()) {
+                    errorHoraSalida = "La hora de salida es obligatoria"
+                    hasError = true
+                }
+
+                if(fechaLlegada==fechaSalida && horaSalida>horaLlegada){
+                    errorHoraSalida = "La hora de salida no puede ser anterior a la hora de llegada"
+                    hasError = true
+                }
+                // Fecha llegada
+                if (fechaLlegada.isBlank()) {
+                    errorFechaLlegada = "La fecha de llegada es obligatoria"
+                    hasError = true
+                }
+
+                if(fechaLlegada<fechaSalida){
+                    errorFechaLlegada = "La fecha de llegada no puede ser anterior a la fecha de salida"
+                    hasError = true
+                }
+
+                // Hora llegada
+                if (horaLlegada.isBlank()) {
+                    errorHoraLlegada = "La hora de llegada es obligatoria"
+                    hasError = true
+                }
+                // Plazas
+                val plazasInt = plazas.toIntOrNull()
+                if (plazasInt == null || plazasInt < 1) {
+                    errorPlazas = "Debe ser un número mayor o igual a 1"
+                    hasError = true
+                }
+                // Precio
+                val precioDouble = precio.toDoubleOrNull()
+                if (precioDouble == null || precioDouble < 0) {
+                    errorPrecio = "Debe ser un número mayor o igual a 0"
+                    hasError = true
+                }
+
+                if (!hasError) {
+                    focusManager.clearFocus() // Force keyboard to close
+                    viewModel.createRide { success, message ->
+                        if (!success) {
+                            // Si el ViewModel detecta otro error (ej. solapamiento), mostrarlo en un diálogo o Toast
+                            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
             }
+        ) {
+            Text("Publicar Viaje")
         }
     }
 }

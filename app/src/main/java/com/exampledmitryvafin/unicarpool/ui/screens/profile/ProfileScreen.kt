@@ -1,6 +1,7 @@
 package com.exampledmitryvafin.unicarpool.ui.screens.profile
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -9,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.exampledmitryvafin.unicarpool.R
 import com.exampledmitryvafin.unicarpool.data.database.AppDatabase
 import com.exampledmitryvafin.unicarpool.repository.ParticipacionRepository
 import com.exampledmitryvafin.unicarpool.repository.UsuarioRepository
@@ -58,6 +61,16 @@ fun ProfileScreen(
     var showSuccess by remember { mutableStateOf(false) }
     var currentErrorMessage by remember { mutableStateOf("") }
     var currentSuccessMessage by remember { mutableStateOf("") }
+
+    var showPasswordDialog by remember { mutableStateOf(false) }
+    var currentPassword by remember { mutableStateOf("") }
+    var newPassword by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    var currentPasswordError by remember { mutableStateOf<String?>(null) }
+    var newPasswordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+
 
     // Manejar errores
     LaunchedEffect(errorMessage) {
@@ -217,7 +230,12 @@ fun ProfileScreen(
             color = MaterialTheme.colorScheme.primaryContainer
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Text("👤", fontSize = 48.sp)
+                Image(
+                    painter = painterResource(id = R.drawable.unicarpoollogo), // Cambia por el nombre de tu imagen
+                    contentDescription = "Logo UniCarpool",
+                    modifier = Modifier
+                        .size(120.dp)
+                )
             }
         }
 
@@ -317,47 +335,120 @@ fun ProfileScreen(
 
         if (showPasswordDialog) {
             AlertDialog(
-                onDismissRequest = { showPasswordDialog = false },
+                onDismissRequest = {
+                    showPasswordDialog = false
+                    // Resetear campos y errores
+                    currentPassword = ""
+                    newPassword = ""
+                    confirmPassword = ""
+                    currentPasswordError = null
+                    newPasswordError = null
+                    confirmPasswordError = null
+                },
                 title = { Text("Cambiar contraseña") },
                 text = {
                     Column {
                         OutlinedTextField(
                             value = currentPassword,
-                            onValueChange = { currentPassword = it },
+                            onValueChange = {
+                                currentPassword = it
+                                currentPasswordError = null
+                            },
                             label = { Text("Contraseña actual") },
                             visualTransformation = PasswordVisualTransformation(),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            isError = currentPasswordError != null,
+                            supportingText = {
+                                if (currentPasswordError != null) {
+                                    Text(currentPasswordError!!, color = MaterialTheme.colorScheme.error)
+                                }
+                            }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = newPassword,
-                            onValueChange = { newPassword = it },
+                            onValueChange = {
+                                newPassword = it
+                                newPasswordError = null
+                            },
                             label = { Text("Nueva contraseña") },
                             visualTransformation = PasswordVisualTransformation(),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            isError = newPasswordError != null,
+                            supportingText = {
+                                if (newPasswordError != null) {
+                                    Text(newPasswordError!!, color = MaterialTheme.colorScheme.error)
+                                }
+                            }
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
                             value = confirmPassword,
-                            onValueChange = { confirmPassword = it },
+                            onValueChange = {
+                                confirmPassword = it
+                                confirmPasswordError = null
+                            },
                             label = { Text("Confirmar nueva contraseña") },
                             visualTransformation = PasswordVisualTransformation(),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            singleLine = true,
+                            isError = confirmPasswordError != null,
+                            supportingText = {
+                                if (confirmPasswordError != null) {
+                                    Text(confirmPasswordError!!, color = MaterialTheme.colorScheme.error)
+                                }
+                            }
                         )
                     }
                 },
                 confirmButton = {
                     Button(
                         onClick = {
-                            authViewModel.changePassword(currentPassword, newPassword, confirmPassword) { success, message ->
-                                if (success) {
-                                    showPasswordDialog = false
-                                    currentPassword = ""
-                                    newPassword = ""
-                                    confirmPassword = ""
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                                } else {
-                                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            // Limpiar errores previos
+                            currentPasswordError = null
+                            newPasswordError = null
+                            confirmPasswordError = null
+                            var hasError = false
+
+                            if (currentPassword.isBlank()) {
+                                currentPasswordError = "Introduce tu contraseña actual"
+                                hasError = true
+                            }
+                            if (newPassword.isBlank()) {
+                                newPasswordError = "La nueva contraseña no puede estar vacía"
+                                hasError = true
+                            } else if (newPassword.length < 4) {
+                                newPasswordError = "Mínimo 4 caracteres"
+                                hasError = true
+                            }
+                            if (confirmPassword.isBlank()) {
+                                confirmPasswordError = "Confirma tu nueva contraseña"
+                                hasError = true
+                            }
+                            if (confirmPassword != newPassword) {
+                                confirmPasswordError = "Las contraseñas no coinciden"
+                                hasError = true
+                            }
+
+                            if (!hasError) {
+                                authViewModel.changePassword(currentPassword, newPassword, confirmPassword) { success, message ->
+                                    if (success) {
+                                        showPasswordDialog = false
+                                        // Limpiar campos
+                                        currentPassword = ""
+                                        newPassword = ""
+                                        confirmPassword = ""
+                                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        // Si el error es de la contraseña actual, mostrarlo en ese campo
+                                        if (message.contains("actual", ignoreCase = true)) {
+                                            currentPasswordError = message
+                                        } else {
+                                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -372,7 +463,6 @@ fun ProfileScreen(
                 }
             )
         }
-
         Spacer(modifier = Modifier.height(12.dp))
 
         // Botón Cerrar sesión

@@ -11,7 +11,7 @@ data class Usuario(
     val correo: String,
     val contrasena: String,
     val fecha_registro: String,
-    val preguntaSeguridad: String = "",   // NUEVO
-    val respuestaSeguridad: String = ""   // NUEVO (en producción habría que hashear)
+    val preguntaSeguridad: String = "",
+    val respuestaSeguridad: String = ""
 )
 

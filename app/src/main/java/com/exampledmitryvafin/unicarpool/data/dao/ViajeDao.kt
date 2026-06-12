@@ -36,7 +36,7 @@ interface ViajeDao {
     @Query("SELECT * FROM viajes WHERE id_viaje = :viajeId")
     suspend fun getViajeById(viajeId: Long): Viaje?
 
-    @Query("SELECT * FROM viajes WHERE id_conductor = :conductorId AND estado = 'activo' ORDER BY fecha_salida, hora_salida")
+    @Query("SELECT * FROM viajes WHERE id_conductor = :conductorId ORDER BY fecha_salida, hora_salida")
     fun getViajesByConductorAsFlow(conductorId: Long): Flow<List<Viaje>>
 
     @Query("DELETE FROM viajes WHERE id_viaje = :viajeId")
