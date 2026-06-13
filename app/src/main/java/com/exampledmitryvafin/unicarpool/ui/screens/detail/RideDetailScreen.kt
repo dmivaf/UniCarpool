@@ -207,7 +207,6 @@ fun RideDetailScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text("👤 Pasajero: #${pasajero.nombre_pasajero}")
-//                            Text("📅 ${pasajero.fecha_union}")
                         }
                     }
                 }
@@ -217,106 +216,118 @@ fun RideDetailScreen(
             item {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (viewModel.isDriver()) {
-                    var showCancelDialog by remember { mutableStateOf(false) }
-                    var cancelDescription by remember { mutableStateOf("") }
+                // Solo mostrar botones de acción si el viaje está ACTIVO
+                if (viaje?.estado == "activo") {
+                    if (viewModel.isDriver()) {
+                        var showCancelDialog by remember { mutableStateOf(false) }
+                        var cancelDescription by remember { mutableStateOf("") }
 
-                    Button(
-                        onClick = { showCancelDialog = true },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                    ) {
-                        Text("Cancelar viaje")
-                    }
-
-                    if (showCancelDialog) {
-                        AlertDialog(
-                            onDismissRequest = { showCancelDialog = false },
-                            title = { Text("Cancelar viaje", color = MaterialTheme.colorScheme.error) },
-                            text = {
-                                Column {
-                                    Text("¿Estás seguro de que quieres cancelar este viaje?")
-                                    Spacer(modifier = Modifier.height(8.dp))
-                                    OutlinedTextField(
-                                        value = cancelDescription,
-                                        onValueChange = { cancelDescription = it },
-                                        label = { Text("Motivo (opcional)") },
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            },
-                            confirmButton = {
-                                Button(
-                                    onClick = {
-                                        viewModel.cancelRide(rideId, cancelDescription) { success, _ ->
-                                            if (success) {
-                                                showCancelDialog = false
-                                                onBack() // Volver a la pantalla anterior
-                                            }
-                                        }
-                                    },
-                                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                                ) {
-                                    Text("Sí, cancelar")
-                                }
-                            },
-                            dismissButton = {
-                                TextButton(onClick = { showCancelDialog = false }) {
-                                    Text("No, volver")
-                                }
-                            }
-                        )
-                    }
-                } else {
-                    // Pasajero ve botón unirse/abandonar
-                    if (isUserJoined) {
                         Button(
-                            onClick = {
-                                viewModel.leaveRide(rideId) { success, message ->
-                                    if (success) {
-                                        // Actualizar la UI
-                                        viewModel.loadRideDetail(rideId)
+                            onClick = { showCancelDialog = true },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text("Cancelar viaje")
+                        }
+
+                        if (showCancelDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showCancelDialog = false },
+                                title = { Text("Cancelar viaje", color = MaterialTheme.colorScheme.error) },
+                                text = {
+                                    Column {
+                                        Text("¿Estás seguro de que quieres cancelar este viaje?")
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        OutlinedTextField(
+                                            value = cancelDescription,
+                                            onValueChange = { cancelDescription = it },
+                                            label = { Text("Motivo (opcional)") },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            viewModel.cancelRide(rideId, cancelDescription) { success, _ ->
+                                                if (success) {
+                                                    showCancelDialog = false
+                                                    onBack()
+                                                }
+                                            }
+                                        },
+                                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                                    ) {
+                                        Text("Sí, cancelar")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = { showCancelDialog = false }) {
+                                        Text("No, volver")
                                     }
                                 }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.error
                             )
-                        ) {
-                            Text("Abandonar viaje")
                         }
                     } else {
-                        Button(
-                            onClick = {
-                                if (viewModel.canJoin()) {
-                                    viewModel.joinRide(rideId) { success, message ->
+                        // Pasajero ve botón unirse/abandonar
+                        if (isUserJoined) {
+                            Button(
+                                onClick = {
+                                    viewModel.leaveRide(rideId) { success, message ->
                                         if (success) {
                                             viewModel.loadRideDetail(rideId)
                                         }
                                     }
-                                } else {
-                                    val viajeActual = viaje
-                                    if (viajeActual?.id_conductor == currentUserId) {
-                                        android.widget.Toast.makeText(
-                                            context,
-                                            "Eres el conductor de este viaje",
-                                            android.widget.Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else if (viajeActual?.plazas_disponibles == 0) {
-                                        android.widget.Toast.makeText(
-                                            context,
-                                            "No hay plazas disponibles",
-                                            android.widget.Toast.LENGTH_SHORT
-                                        ).show()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                            ) {
+                                Text("Abandonar viaje")
+                            }
+                        } else {
+                            Button(
+                                onClick = {
+                                    if (viewModel.canJoin()) {
+                                        viewModel.joinRide(rideId) { success, message ->
+                                            if (success) {
+                                                viewModel.loadRideDetail(rideId)
+                                            }
+                                        }
+                                    } else {
+                                        val viajeActual = viaje
+                                        if (viajeActual?.id_conductor == currentUserId) {
+                                            android.widget.Toast.makeText(
+                                                context,
+                                                "Eres el conductor de este viaje",
+                                                android.widget.Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else if (viajeActual?.plazas_disponibles == 0) {
+                                            android.widget.Toast.makeText(
+                                                context,
+                                                "No hay plazas disponibles",
+                                                android.widget.Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     }
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = viewModel.canJoin()
-                        ) {
-                            Text("Unirse al viaje")
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                enabled = viewModel.canJoin()
+                            ) {
+                                Text("Unirse al viaje")
+                            }
                         }
+                    }
+                } else {
+                    // Viaje completado o cancelado: mostrar mensaje informativo
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+                    ) {
+                        Text(
+                            text = if (viaje?.estado == "completado") "Este viaje ya ha finalizado." else "Este viaje fue cancelado.",
+                            modifier = Modifier.padding(16.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
 
@@ -325,9 +336,7 @@ fun RideDetailScreen(
                 Button(
                     onClick = onBack,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                 ) {
                     Text("Volver")
                 }

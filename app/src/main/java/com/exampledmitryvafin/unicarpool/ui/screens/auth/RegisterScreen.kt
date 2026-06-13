@@ -2,6 +2,8 @@ package com.exampledmitryvafin.unicarpool.ui.screens.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -32,6 +34,7 @@ fun RegisterScreen(
     var confirmError by remember { mutableStateOf<String?>(null) }
     var questionError by remember { mutableStateOf<String?>(null) }
     var answerError by remember { mutableStateOf<String?>(null) }
+    var showEmailHelpDialog by remember { mutableStateOf(false) }
 
 // Luego en cada OutlinedTextField usa isError y supportingText.
 // En el botón de registro, valida cada campo y asigna el error correspondiente.
@@ -80,22 +83,34 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Campo Email
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it
-                            emailError = null},
-            label = { Text("Correo universitario") },
-            placeholder = { Text("nombre@alumno.ucm.es") },
+        // Campo Email con botón de ayuda
+        Row(
             modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true,
-            isError = emailError != null,
-            supportingText = {
-                if (emailError != null) {
-                    Text(emailError!!, color = MaterialTheme.colorScheme.error)
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            OutlinedTextField(
+                value = email,
+                onValueChange = {
+                    email = it
+                    emailError = null
+                },
+                label = { Text("Correo electrónico") },
+                placeholder = { Text("nombre@universidad.es") },
+                modifier = Modifier.weight(1f),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                singleLine = true,
+                isError = emailError != null,
+                supportingText = {
+                    if (emailError != null) Text(emailError!!, color = MaterialTheme.colorScheme.error)
                 }
+            )
+            IconButton(
+                onClick = { showEmailHelpDialog = true }
+            ) {
+                Icon(Icons.Default.Info, contentDescription = "Ayuda")
             }
-        )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -272,6 +287,29 @@ fun RegisterScreen(
             text = { Text(errorMessage) },
             confirmButton = {
                 TextButton(onClick = { showError = false }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
+    if (showEmailHelpDialog) {
+        AlertDialog(
+            onDismissRequest = { showEmailHelpDialog = false },
+            title = { Text("Correos universitarios aceptados") },
+            text = {
+                Column {
+                    Text("Debes registrarte con uno de estos dominios:")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = authViewModel.getAllowedDomainsFormatted(),
+                        fontSize = 12.sp,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showEmailHelpDialog = false }) {
                     Text("Aceptar")
                 }
             }

@@ -63,16 +63,6 @@ class AuthViewModel(
     }
     // Lista de dominios de correo universitario aceptados
     private val allowedDomains = listOf(
-        "@alumno.ucm.es",
-        "@ucm.es",
-        "@upm.es",
-        "@alumno.upm.es",
-        "@uam.es",
-        "@alumno.uam.es",
-        "@uc3m.es",
-        "@alumno.uc3m.es",
-        "@urjc.es",
-        "@uah.es",
         "@upv.es",
         "@alumno.upv.es",
         "@upv.edu.es",
@@ -96,8 +86,6 @@ class AuthViewModel(
     }
 
     // Registrar nuevo usuario
-    // En AuthViewModel.kt
-
     fun registerUser(
         name: String,
         email: String,
@@ -307,8 +295,6 @@ class AuthViewModel(
         }
     }
 
-    // En AuthViewModel.kt
-
     suspend fun recoverPassword(email: String, answer: String): String? {
         return try {
             val user = usuarioRepository.getUserByEmail(email)
@@ -322,8 +308,6 @@ class AuthViewModel(
         }
     }
 
-    // En AuthViewModel.kt
-
     suspend fun getSecurityQuestion(email: String): String? {
         return try {
             val user = usuarioRepository.getUserByEmail(email)
@@ -331,5 +315,9 @@ class AuthViewModel(
         } catch (e: Exception) {
             null
         }
+    }
+
+    fun getAllowedDomainsFormatted(): String {
+        return allowedDomains.joinToString("\n")
     }
 }

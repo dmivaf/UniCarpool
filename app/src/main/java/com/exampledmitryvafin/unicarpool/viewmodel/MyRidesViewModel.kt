@@ -33,7 +33,7 @@ class MyRidesViewModel(
     ) { viajesComoConductor, participaciones ->
         // Viajes como conductor: activos (futuros) o cancelados
         val conductorRides = viajesComoConductor
-            .filter { (it.estado == "activo" && isFuture(it)) || it.estado == "cancelado" }
+            .filter { (it.estado == "activo" && isFuture(it))}
             .map { RideWithRole(it, RideRole.CONDUCTOR) }
 
         // Viajes como pasajero: activos (futuros) o cancelados

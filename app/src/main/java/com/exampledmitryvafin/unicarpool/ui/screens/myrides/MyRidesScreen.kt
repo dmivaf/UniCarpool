@@ -154,25 +154,13 @@ fun MyRidesScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(historyRides) { rideWithRole ->
-                            val isCompleted = rideWithRole.viaje.estado == "completado"
-                            val canSwipe = isCompleted && rideWithRole.role == RideRole.PASAJERO
-
-                            if (canSwipe) {
-                                SwipeToDeleteCard(
-                                    viaje = rideWithRole.viaje,
-                                    role = rideWithRole.role,
-                                    isActive = false,
-                                    onRideClick = { onRideClick(rideWithRole.viaje.id_viaje) },
-                                    onDelete = { viewModel.deletePassengerParticipation(rideWithRole.viaje.id_viaje) }
-                                )
-                            } else {
                                 RideItemCard(
                                     viaje = rideWithRole.viaje,
                                     role = rideWithRole.role,
                                     isActive = false,
                                     onRideClick = { onRideClick(rideWithRole.viaje.id_viaje) }
                                 )
-                            }
+
                         }
                     }
                 }
