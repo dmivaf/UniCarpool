@@ -51,7 +51,7 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.unicarpoollogo), // Cambia por el nombre de tu imagen
+            painter = painterResource(id = R.drawable.unicarpoollogo),
             contentDescription = "Logo UniCarpool",
             modifier = Modifier
                 .size(240.dp)
@@ -154,17 +154,6 @@ fun LoginScreen(
         }
     }
 
-    // Diálogo de error
-//    if (showError) {
-//        AlertDialog(
-//            onDismissRequest = { showError = false },
-//            title = { Text("Error") },
-//            text = { Text(errorMessage) },
-//            confirmButton = { TextButton(onClick = { showError = false }) { Text("Aceptar") } }
-//        )
-//    }
-
-    // Diálogo de recuperación de contraseña
     if (showRecoveryDialog) {
         var step by remember { mutableStateOf(1) } // 1: pedir email, 2: mostrar pregunta y respuesta, 3: mostrar contraseña
         var recoveryEmail by remember { mutableStateOf("") }
@@ -176,7 +165,6 @@ fun LoginScreen(
         AlertDialog(
             onDismissRequest = {
                 showRecoveryDialog = false
-                // Resetear estados al cerrar
                 step = 1
                 recoveryEmail = ""
                 securityQuestion = ""

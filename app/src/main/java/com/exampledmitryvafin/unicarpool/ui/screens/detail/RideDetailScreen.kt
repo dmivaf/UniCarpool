@@ -53,12 +53,10 @@ fun RideDetailScreen(
     var currentErrorMessage by remember { mutableStateOf("") }
     var currentSuccessMessage by remember { mutableStateOf("") }
 
-    // Cargar datos al entrar
     LaunchedEffect(rideId) {
         viewModel.loadRideDetail(rideId)
     }
 
-    // Manejar errores
     LaunchedEffect(errorMessage) {
         if (errorMessage != null && errorMessage!!.isNotBlank()) {
             currentErrorMessage = errorMessage!!
@@ -66,7 +64,6 @@ fun RideDetailScreen(
         }
     }
 
-    // Manejar éxitos
     LaunchedEffect(successMessage) {
         if (successMessage != null && successMessage!!.isNotBlank()) {
             currentSuccessMessage = successMessage!!
@@ -74,7 +71,6 @@ fun RideDetailScreen(
         }
     }
 
-    // Diálogo de error
     if (showError) {
         AlertDialog(
             onDismissRequest = {
@@ -94,7 +90,6 @@ fun RideDetailScreen(
         )
     }
 
-    // Diálogo de éxito
     if (showSuccess) {
         AlertDialog(
             onDismissRequest = {
@@ -141,7 +136,6 @@ fun RideDetailScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Información del viaje
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -162,7 +156,6 @@ fun RideDetailScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Fechas y horas
                         InfoRow("📅 Fecha salida:", "${viaje!!.fecha_salida} ${viaje!!.hora_salida}")
                         InfoRow("📍 Fecha llegada:", "${viaje!!.fecha_llegada} ${viaje!!.hora_llegada}")
                         InfoRow("👤 Conductor:", "${viaje!!.nombre_conductor}")
@@ -170,7 +163,6 @@ fun RideDetailScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        // Estado de plazas
                         val plazasColor = if (viaje!!.plazas_disponibles > 0)
                             MaterialTheme.colorScheme.primary
                         else
@@ -185,7 +177,6 @@ fun RideDetailScreen(
                 }
             }
 
-            // Lista de pasajeros
             if (pasajeros.isNotEmpty()) {
                 item {
                     Text(
@@ -212,11 +203,9 @@ fun RideDetailScreen(
                 }
             }
 
-            // Botones de acción
             item {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Solo mostrar botones de acción si el viaje está ACTIVO
                 if (viaje?.estado == "activo") {
                     if (viewModel.isDriver()) {
                         var showCancelDialog by remember { mutableStateOf(false) }
@@ -269,7 +258,6 @@ fun RideDetailScreen(
                             )
                         }
                     } else {
-                        // Pasajero ve botón unirse/abandonar
                         if (isUserJoined) {
                             Button(
                                 onClick = {
@@ -318,7 +306,6 @@ fun RideDetailScreen(
                         }
                     }
                 } else {
-                    // Viaje completado o cancelado: mostrar mensaje informativo
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)

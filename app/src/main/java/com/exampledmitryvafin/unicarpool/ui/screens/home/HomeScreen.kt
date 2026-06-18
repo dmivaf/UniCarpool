@@ -42,7 +42,6 @@ fun HomeScreen(
         viajeViewModel.updateCompletedViajes(fechaActual, horaActual)
     }
 
-    // Estados de filtros
     val origen by viajeViewModel.origenBusqueda.collectAsState()
     val destino by viajeViewModel.destinoBusqueda.collectAsState()
     val fecha by viajeViewModel.fechaBusqueda.collectAsState()
@@ -53,7 +52,6 @@ fun HomeScreen(
     var showDatePicker by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        // Cabecera
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,7 +74,6 @@ fun HomeScreen(
             }
         }
 
-        // Botón para mostrar/ocultar filtros
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -105,7 +102,6 @@ fun HomeScreen(
             }
         }
 
-        // Panel de filtros (colapsable)
         if (showFilters) {
             Card(
                 modifier = Modifier
@@ -114,7 +110,6 @@ fun HomeScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Origen
                     OutlinedTextField(
                         value = origen,
                         onValueChange = { viajeViewModel.updateOrigenBusqueda(it) },
@@ -125,7 +120,6 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Destino
                     OutlinedTextField(
                         value = destino,
                         onValueChange = { viajeViewModel.updateDestinoBusqueda(it) },
@@ -136,7 +130,6 @@ fun HomeScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Fecha
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,7 +148,6 @@ fun HomeScreen(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Precio máximo
                     OutlinedTextField(
                         value = if (precioMax > 0) precioMax.toString() else "",
                         onValueChange = {
@@ -169,12 +161,10 @@ fun HomeScreen(
                         singleLine = true
                     )
 
-                    // Plazas disponibles mínimas
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        // Plazas disponibles mínimas
                         OutlinedTextField(
                             value = plazasMinText,
                             onValueChange = { viajeViewModel.updatePlazasMinText(it) },
@@ -187,14 +177,13 @@ fun HomeScreen(
                     }
                 }
 
-                // Al final del panel de filtros, antes de cerrar el Card
                 Button(
                     onClick = {
                         viajeViewModel.updateOrigenBusqueda("")
                         viajeViewModel.updateDestinoBusqueda("")
                         viajeViewModel.updateFechaBusqueda("")
                         viajeViewModel.updatePrecioMax(0.0)
-                        viajeViewModel.updatePlazasMinText("")   // NUEVO
+                        viajeViewModel.updatePlazasMinText("")
                     },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
@@ -206,7 +195,8 @@ fun HomeScreen(
             }
         }
 
-        // Resultados
+
+
         if (isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -244,7 +234,6 @@ fun HomeScreen(
         }
     }
 
-    // DatePicker dialog
     if (showDatePicker) {
         DatePickerDialog { date ->
             viajeViewModel.updateFechaBusqueda(date)

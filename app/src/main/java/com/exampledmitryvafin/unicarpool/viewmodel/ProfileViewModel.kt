@@ -58,12 +58,8 @@ class ProfileViewModel(
                     onResult(false, "El nombre no puede estar vacío")
                     return@launch
                 }
-                // Actualizar en tabla usuarios
                 usuarioRepository.updateUserName(currentUserId, newName)
-
-                // Actualizar en viajes donde es conductor
                 viajeRepository.updateConductorName(currentUserId, newName)
-                // Actualizar en participaciones donde es pasajero
                 participacionRepository.updatePassengerName(currentUserId, newName)
 
                 _successMessage.value = "Nombre actualizado correctamente"
@@ -84,15 +80,12 @@ class ProfileViewModel(
                 for (participacion in participaciones) {
                     participacionRepository.deleteParticipacionById(participacion.id_participacion)
                 }
-
                 val viajesConductor = viajeRepository.getViajesByConductor(currentUserId)
                 for (viaje in viajesConductor) {
                     participacionRepository.deleteByViajeId(viaje.id_viaje)
                     viajeRepository.deleteViaje(viaje.id_viaje)
                 }
-
                 usuarioRepository.deleteUser(currentUserId)
-
                 _successMessage.value = "Cuenta eliminada correctamente"
                 onResult(true, "Cuenta eliminada")
             } catch (e: Exception) {

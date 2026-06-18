@@ -21,7 +21,6 @@ class ViajeViewModel(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    // Añade estos estados
     private val _origenBusqueda = MutableStateFlow("")
     val origenBusqueda: StateFlow<String> = _origenBusqueda.asStateFlow()
 
@@ -39,7 +38,6 @@ class ViajeViewModel(
     private val _plazasMinText = MutableStateFlow("")
     val plazasMinText: StateFlow<String> = _plazasMinText.asStateFlow()
 
-    // Función para actualizar el texto
     fun updatePlazasMinText(value: String) {
         _plazasMinText.value = value
         triggerSearch()
@@ -65,7 +63,6 @@ class ViajeViewModel(
         triggerSearch()
     }
 
-    // Obtener el valor numérico (0 si está vacío o no es número)
     private fun getPlazasMinValue(): Int {
         return _plazasMinText.value.toIntOrNull()?.takeIf { it >= 0 } ?: 0
     }
@@ -79,7 +76,7 @@ class ViajeViewModel(
                 destino = _destinoBusqueda.value,
                 fecha = _fechaBusqueda.value,
                 precioMax = _precioMax.value,
-                plazasMin = getPlazasMinValue()   // Convertir a Int
+                plazasMin = getPlazasMinValue()
             ).collect { viajes ->
                 _viajesDisponibles.value = viajes
             }
@@ -100,7 +97,6 @@ class ViajeViewModel(
         }
     }
 
-    // En ViajeViewModel.kt
     fun updateCompletedViajes(fecha: String, hora: String) {
         viewModelScope.launch {
             viajeRepository.updateCompletedViajes(fecha, hora)

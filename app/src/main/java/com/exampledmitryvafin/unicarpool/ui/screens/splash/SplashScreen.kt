@@ -24,13 +24,11 @@ import com.exampledmitryvafin.unicarpool.R
 fun SplashScreen(
     onSplashComplete: () -> Unit
 ) {
-    // Esperar 2 segundos y luego navegar
     LaunchedEffect(Unit) {
         delay(2000)
         onSplashComplete()
     }
 
-    // Animación de escala
     val infiniteTransition = rememberInfiniteTransition()
     val scale by infiniteTransition.animateFloat(
         initialValue = 0.8f,
@@ -50,7 +48,6 @@ fun SplashScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Logo (usa un icono por defecto, puedes cambiarlo después)
             Image(
                 painter = painterResource(id = R.drawable.unicarpoollogo),
                 contentDescription = "Logo UniCarpool",

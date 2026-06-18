@@ -109,3 +109,4 @@ interface ParticipacionDao {
     @Query("DELETE FROM participaciones WHERE id_usuario = :usuarioId AND id_viaje = :viajeId")
     suspend fun deleteParticipacionByUserAndRide(usuarioId: Long, viajeId: Long)
 }
+

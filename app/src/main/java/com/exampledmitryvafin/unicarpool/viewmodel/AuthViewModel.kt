@@ -85,7 +85,6 @@ class AuthViewModel(
         return password.length >= 4
     }
 
-    // Registrar nuevo usuario
     fun registerUser(
         name: String,
         email: String,
@@ -97,9 +96,7 @@ class AuthViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
-
             try {
-                // Validaciones
                 if (name.isBlank()) {
                     onResult(false, "El nombre no puede estar vacío")
                     return@launch
@@ -122,16 +119,15 @@ class AuthViewModel(
                     return@launch
                 }
 
-                // Verificar si el usuario ya existe
                 val existingUser = usuarioRepository.getUserByEmail(email)
                 if (existingUser != null) {
                     onResult(false, "Ya existe una cuenta con este correo")
                     return@launch
                 }
 
-                // Crear nuevo usuario
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 val currentDate = dateFormat.format(Date())
+
 
                 val newUser = Usuario(
                     nombre = name,
@@ -141,7 +137,6 @@ class AuthViewModel(
                     preguntaSeguridad = securityQuestion,
                     respuestaSeguridad = securityAnswer
                 )
-
                 val userId = usuarioRepository.registerUser(newUser)
 
                 if (userId > 0) {
@@ -162,12 +157,11 @@ class AuthViewModel(
             }
         }
     }
-    // Iniciar sesión
+
     fun login(email: String, password: String, onResult: (Boolean, String) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
             _errorMessage.value = null
-
             try {
                 if (email.isBlank()) {
                     onResult(false, "Introduce un correo electrónico")
@@ -177,15 +171,11 @@ class AuthViewModel(
                     onResult(false, "Introduce la contraseña")
                     return@launch
                 }
-
-                // Primero comprobar si el correo existe
                 val userExists = usuarioRepository.getUserByEmail(email) != null
                 if (!userExists) {
                     onResult(false, "No existe ninguna cuenta con este correo electrónico")
                     return@launch
                 }
-
-                // Si existe, intentar login con contraseña
                 val user = usuarioRepository.login(email, password)
                 if (user != null) {
                     dataStoreManager.saveUserSession(user.id_usuario, user.nombre, user.correo)
@@ -205,7 +195,6 @@ class AuthViewModel(
             }
         }
     }
-    // Cerrar sesión
     fun logout(onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             try {
@@ -249,7 +238,6 @@ class AuthViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                // Validaciones
                 if (currentPassword.isBlank()) {
                     onResult(false, "Debes introducir la contraseña actual")
                     return@launch
@@ -273,7 +261,6 @@ class AuthViewModel(
                     return@launch
                 }
 
-                // Obtener usuario actual y verificar contraseña
                 val user = usuarioRepository.getUserById(userId)
                 if (user == null) {
                     onResult(false, "Usuario no encontrado")
@@ -284,7 +271,6 @@ class AuthViewModel(
                     return@launch
                 }
 
-                // Actualizar contraseña
                 usuarioRepository.updatePassword(userId, newPassword)
                 onResult(true, "Contraseña actualizada correctamente")
             } catch (e: Exception) {

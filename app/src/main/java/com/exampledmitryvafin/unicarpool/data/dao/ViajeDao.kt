@@ -51,7 +51,6 @@ interface ViajeDao {
 
     // En ViajeDao.kt
 
-    // Búsqueda con filtros: origen, destino, fecha, precio máximo
     @Query("""
     SELECT * FROM viajes 
     WHERE estado = 'activo' 
@@ -70,7 +69,6 @@ interface ViajeDao {
         plazasMin: Int
     ): Flow<List<Viaje>>
 
-    // Comprobar si el conductor tiene un viaje activo en la misma fecha con horario solapado
     @Query("""
     SELECT COUNT(*) > 0 FROM viajes 
     WHERE id_conductor = :conductorId 

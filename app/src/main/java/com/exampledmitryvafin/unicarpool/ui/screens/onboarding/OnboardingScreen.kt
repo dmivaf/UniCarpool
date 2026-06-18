@@ -46,7 +46,7 @@ fun OnboardingScreen(
     )
 
     val pagerState = rememberPagerState(pageCount = { pages.size })
-    val coroutineScope = rememberCoroutineScope()  // ← AÑADE ESTA LÍNEA
+    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -67,7 +67,6 @@ fun OnboardingScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Indicadores (dots)
             Row(
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -86,19 +85,14 @@ fun OnboardingScreen(
                 }
             }
 
-            // Botón Siguiente / Comenzar (CORREGIDO)
             Button(
                 onClick = {
                     if (pagerState.currentPage == pages.size - 1) {
-                        // Guardar que ya se mostró el onboarding
-
-
                         coroutineScope.launch {
                             dataStoreManager.setOnboardingCompleted(true)
                         }
                         onComplete()
                     } else {
-                        // Ahora se ejecuta dentro de una corutina
                         coroutineScope.launch {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }

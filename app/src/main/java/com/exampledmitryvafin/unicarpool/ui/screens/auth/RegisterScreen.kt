@@ -36,8 +36,6 @@ fun RegisterScreen(
     var answerError by remember { mutableStateOf<String?>(null) }
     var showEmailHelpDialog by remember { mutableStateOf(false) }
 
-// Luego en cada OutlinedTextField usa isError y supportingText.
-// En el botón de registro, valida cada campo y asigna el error correspondiente.
 
     val isLoading by authViewModel.isLoading.collectAsState()
 
@@ -64,7 +62,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Campo Nombre
         OutlinedTextField(
             value = name,
             onValueChange = { name = it
@@ -82,8 +79,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Email
-        // Campo Email con botón de ayuda
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -114,7 +109,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Contraseña
         OutlinedTextField(
             value = password,
             onValueChange = { password = it
@@ -134,7 +128,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Campo Confirmar Contraseña
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it
@@ -190,7 +183,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botón de registro
         Button(
             onClick = {
                 nameError = null
@@ -201,12 +193,6 @@ fun RegisterScreen(
                 answerError = null
 
                 var hasError = false
-                // Validación local antes de llamar al ViewModel
-//                if (password != confirmPassword) {
-//                    showError = true
-//                    errorMessage = "Las contraseñas no coinciden"
-//                    return@Button
-//                }
 
                 if (name.isBlank()) {
                     nameError = "El nombre es obligatorio"
@@ -226,7 +212,7 @@ fun RegisterScreen(
                     passwordError = "Mínimo 4 caracteres"
                     hasError = true
                 }
-                if (password.isBlank()) {
+                if (confirmPassword.isBlank()) {
                     confirmError = "Repite la contraseña"
                     hasError = true
                 }
@@ -249,7 +235,6 @@ fun RegisterScreen(
                     ) { success, message ->
                         if (success) onRegisterSuccess()
                         else {
-                            // Si el error es global (ej. correo ya existe), mostrar en un diálogo o Toast
                             emailError = message
                         }
                     }

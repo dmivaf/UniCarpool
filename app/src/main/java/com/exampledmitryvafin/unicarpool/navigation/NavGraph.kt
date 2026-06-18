@@ -39,7 +39,6 @@ fun NavGraph(
     navController: NavHostController,
     context: android.content.Context
 ) {
-    // Dependencias para AuthViewModel
     val database = AppDatabase.getInstance(context)
     val usuarioRepository = UsuarioRepository(database.usuarioDao())
     val viajeRepository = ViajeRepository(database.viajeDao())
@@ -62,13 +61,12 @@ fun NavGraph(
         navController = navController,
         startDestination = Destinations.Splash.route
     ) {
-        // Pantallas de autenticación
         composable(Destinations.Splash.route) {
             val onboardingCompleted by dataStoreManager.isOnboardingCompleted().collectAsState(initial = false)
             val isLoggedIn by authViewModel.isLoggedIn.collectAsState()
 
             LaunchedEffect(Unit) {
-                delay(2000) // Duración del splash
+                delay(2000)
                 when {
                     !onboardingCompleted -> navController.navigate(Destinations.Onboarding.route)
                     isLoggedIn -> navController.navigate(Destinations.Home.route)
@@ -83,7 +81,6 @@ fun NavGraph(
             OnboardingScreen(
                 dataStoreManager = dataStoreManager,
                 onComplete = {
-                    // Siempre ir a Login después del onboarding
                     navController.navigate(Destinations.Login.route) {
                         popUpTo(Destinations.Onboarding.route) { inclusive = true }
                     }
@@ -119,12 +116,10 @@ fun NavGraph(
             )
         }
 
-        // Pantalla principal con BottomNavigation (SOLO ESTA RUTA)
         composable(Destinations.Home.route) {
             val userId by authViewModel.currentUserId.collectAsState()
-            // Forzar una nueva instancia de ViajeViewModel por cada userId
             val viajeViewModel: ViajeViewModel = viewModel(
-                key = "viajeViewModel_$userId",   // Clave única por usuario
+                key = "viajeViewModel_$userId",
                 factory = ViajeViewModelFactory(viajeRepository)
             )
             MainScreenWithBottomBar(
@@ -136,17 +131,14 @@ fun NavGraph(
     }
 }
 
-// Componente que contiene la barra inferior
 @Composable
 fun MainScreenWithBottomBar(
     navController: NavHostController,
     viajeViewModel: ViajeViewModel,
     authViewModel: AuthViewModel
 ) {
-    // Creamos un NavController anidado para la sección principal
     val bottomNavController = rememberNavController()
 
-    // Obtener el userId y userName actual
     val userId by authViewModel.currentUserId.collectAsState()
     val userName by authViewModel.currentUserName.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -170,13 +162,11 @@ fun MainScreenWithBottomBar(
                 )
             }
 
-            // 👇 ESTA ES LA VERSIÓN CORRECTA (con parámetros)
             composable(Destinations.Create.route) {
                 CreateRideScreen(
                     currentUserId = if (userId > 0) userId else 1L,
                     currentUserName = userName,
                     onRideCreated = {
-                        // Volver a la pantalla de búsqueda después de crear el viaje
                         bottomNavController.popBackStack()
                         android.widget.Toast.makeText(
                             context,
@@ -200,15 +190,12 @@ fun MainScreenWithBottomBar(
                 ProfileScreen(
                     authViewModel = authViewModel,
                     onLogout = {
-                        // Navegar al login y limpiar el historial
                         navController.navigate(Destinations.Login.route) {
                             popUpTo(Destinations.Home.route) { inclusive = true }
                         }
                     }
                 )
             }
-
-            // Dentro de MainScreenWithBottomBar, en el NavHost anidado, añade:
 
             composable(
                 route = Destinations.RideDetail.route,

@@ -72,7 +72,6 @@ fun ProfileScreen(
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
 
-    // Manejar errores
     LaunchedEffect(errorMessage) {
         if (errorMessage != null && errorMessage!!.isNotBlank()) {
             currentErrorMessage = errorMessage!!
@@ -80,7 +79,6 @@ fun ProfileScreen(
         }
     }
 
-    // Manejar éxitos
     LaunchedEffect(successMessage) {
         if (successMessage != null && successMessage!!.isNotBlank()) {
             currentSuccessMessage = successMessage!!
@@ -88,7 +86,6 @@ fun ProfileScreen(
         }
     }
 
-    // Diálogo de error
     if (showError) {
         AlertDialog(
             onDismissRequest = {
@@ -108,7 +105,6 @@ fun ProfileScreen(
         )
     }
 
-    // Diálogo de éxito
     if (showSuccess) {
         AlertDialog(
             onDismissRequest = {
@@ -128,7 +124,6 @@ fun ProfileScreen(
         )
     }
 
-    // Diálogo para editar nombre
     if (showEditDialog) {
         AlertDialog(
             onDismissRequest = { showEditDialog = false },
@@ -143,11 +138,9 @@ fun ProfileScreen(
             },
             confirmButton = {
                 Button(
-                    // En el diálogo de edición, modifica el onClick:
                     onClick = {
                         viewModel.updateUserName(newName) { success, message ->
                             if (success) {
-                                // Actualizar también en AuthViewModel
                                 authViewModel.updateUserName(newName) { updated ->
                                     if (updated) {
                                         showEditDialog = false
@@ -168,7 +161,6 @@ fun ProfileScreen(
         )
     }
 
-    // Diálogo para eliminar cuenta
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -192,7 +184,6 @@ fun ProfileScreen(
                     onClick = {
                         viewModel.deleteAccount { success, message ->
                             if (success) {
-                                // Cerrar sesión después de eliminar la cuenta
                                 authViewModel.logout { logoutSuccess ->
                                     if (logoutSuccess) {
                                         onLogout()
@@ -222,7 +213,6 @@ fun ProfileScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Avatar / Foto de perfil
         Surface(
             modifier = Modifier
                 .size(100.dp)
@@ -231,7 +221,7 @@ fun ProfileScreen(
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Image(
-                    painter = painterResource(id = R.drawable.unicarpoollogo), // Cambia por el nombre de tu imagen
+                    painter = painterResource(id = R.drawable.unicarpoollogo),
                     contentDescription = "Logo UniCarpool",
                     modifier = Modifier
                         .size(120.dp)
@@ -241,7 +231,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Nombre del usuario
         Text(
             text = currentUserName.ifEmpty { "Usuario" },
             fontSize = 24.sp,
@@ -250,7 +239,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Email del usuario
         Text(
             text = currentUserEmail,
             fontSize = 14.sp,
@@ -263,7 +251,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Estadísticas
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -309,7 +296,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Botón Editar perfil
         Button(
             onClick = { showEditDialog = true },
             modifier = Modifier.fillMaxWidth(),
@@ -337,7 +323,6 @@ fun ProfileScreen(
             AlertDialog(
                 onDismissRequest = {
                     showPasswordDialog = false
-                    // Resetear campos y errores
                     currentPassword = ""
                     newPassword = ""
                     confirmPassword = ""
@@ -406,7 +391,6 @@ fun ProfileScreen(
                 confirmButton = {
                     Button(
                         onClick = {
-                            // Limpiar errores previos
                             currentPasswordError = null
                             newPasswordError = null
                             confirmPasswordError = null
@@ -436,13 +420,11 @@ fun ProfileScreen(
                                 authViewModel.changePassword(currentPassword, newPassword, confirmPassword) { success, message ->
                                     if (success) {
                                         showPasswordDialog = false
-                                        // Limpiar campos
                                         currentPassword = ""
                                         newPassword = ""
                                         confirmPassword = ""
                                         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                                     } else {
-                                        // Si el error es de la contraseña actual, mostrarlo en ese campo
                                         if (message.contains("actual", ignoreCase = true)) {
                                             currentPasswordError = message
                                         } else {
@@ -465,7 +447,6 @@ fun ProfileScreen(
         }
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Botón Cerrar sesión
         Button(
             onClick = {
                 authViewModel.logout { success ->
@@ -485,7 +466,6 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Botón Eliminar cuenta
         Button(
             onClick = { showDeleteDialog = true },
             modifier = Modifier.fillMaxWidth(),

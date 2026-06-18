@@ -13,7 +13,6 @@ sealed class Destinations(val route: String) {
     object MyRides : Destinations("my_rides")
     object Profile : Destinations("profile")
 
-    // NUEVA: Ruta con parámetro (el ID del viaje)
     object RideDetail : Destinations("ride_detail/{rideId}") {
         fun pass(rideId: Long): String = "ride_detail/$rideId"
     }

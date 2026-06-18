@@ -26,17 +26,14 @@ class MyRidesViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
-    // Flujo combinado para viajes activos (futuros + cancelados)
     val activeRides: StateFlow<List<RideWithRole>> = combine(
         viajeRepository.getViajesByConductorAsFlow(currentUserId),
         participacionRepository.getParticipacionesActivasWithViaje(currentUserId)
     ) { viajesComoConductor, participaciones ->
-        // Viajes como conductor: activos (futuros) o cancelados
         val conductorRides = viajesComoConductor
             .filter { (it.estado == "activo" && isFuture(it))}
             .map { RideWithRole(it, RideRole.CONDUCTOR) }
 
-        // Viajes como pasajero: activos (futuros) o cancelados
         val pasajeroRides = mutableListOf<RideWithRole>()
         for (p in participaciones) {
             val viaje = viajeRepository.getViajeById(p.id_viaje)
@@ -51,7 +48,6 @@ class MyRidesViewModel(
         initialValue = emptyList()
     )
 
-    // Flujo combinado para historial (solo completados)
     val historyRides: StateFlow<List<RideWithRole>> = combine(
         viajeRepository.getViajesByConductorAsFlow(currentUserId),
         participacionRepository.getParticipacionesActivasWithViaje(currentUserId)

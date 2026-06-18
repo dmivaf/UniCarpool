@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 class ParticipacionRepository(private val participacionDao: ParticipacionDao) {
 
-    // === Flow (observables) ===
 
     fun getParticipacionesActivasByUsuarioFlow(usuarioId: Long): Flow<List<Participacion>> {
         return participacionDao.getParticipacionesActivasByUsuarioFlow(usuarioId)
@@ -20,7 +19,6 @@ class ParticipacionRepository(private val participacionDao: ParticipacionDao) {
         return participacionDao.getParticipacionesByViajeFlow(viajeId)
     }
 
-    // === Suspend (carga única) ===
 
     suspend fun getParticipacionesActivasByUsuario(usuarioId: Long): List<Participacion> {
         return participacionDao.getParticipacionesActivasByUsuario(usuarioId)
@@ -84,7 +82,6 @@ class ParticipacionRepository(private val participacionDao: ParticipacionDao) {
         return participacionDao.hasOverlappingPassengerRideForConductor(usuarioId, fechaSalida, horaSalida, horaLlegada)
     }
 
-    // En ParticipacionRepository.kt
 
     fun getParticipacionesActivasWithViaje(usuarioId: Long): Flow<List<Participacion>> {
         return participacionDao.getParticipacionesActivasWithViaje(usuarioId)

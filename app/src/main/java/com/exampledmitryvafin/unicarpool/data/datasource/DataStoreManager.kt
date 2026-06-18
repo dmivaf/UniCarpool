@@ -19,20 +19,21 @@ class DataStoreManager(private val context: Context) {
         private val USER_ID_KEY = longPreferencesKey("user_id")
         private val USER_NAME_KEY = stringPreferencesKey("user_name")
         private val USER_EMAIL_KEY = stringPreferencesKey("user_email")
+        private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
+
     }
 
-    // Añadir esta clave
-    private val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
-
-    // Añadir funciones
     suspend fun setOnboardingCompleted(completed: Boolean) {
         context.dataStore.edit { prefs ->
             prefs[ONBOARDING_COMPLETED_KEY] = completed
         }
     }
-
     fun isOnboardingCompleted(): Flow<Boolean> = context.dataStore.data.map { prefs ->
         prefs[ONBOARDING_COMPLETED_KEY] ?: false
+    }
+    val isLoggedIn: Flow<Boolean> = context.dataStore.data.map { prefs ->
+        val userId = prefs[USER_ID_KEY] ?: -1L
+        userId > 0
     }
 
     suspend fun saveUserSession(userId: Long, name: String, email: String) {
@@ -55,10 +56,6 @@ class DataStoreManager(private val context: Context) {
         prefs[USER_EMAIL_KEY] ?: ""
     }
 
-    val isLoggedIn: Flow<Boolean> = context.dataStore.data.map { prefs ->
-        val userId = prefs[USER_ID_KEY] ?: -1L
-        userId > 0
-    }
 
     suspend fun clearUserSession() {
         context.dataStore.edit { prefs ->

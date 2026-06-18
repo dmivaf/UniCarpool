@@ -51,12 +51,12 @@ class ViajeRepository(private val viajeDao: ViajeDao) {
         viajeDao.incrementPlazas(viajeId)
     }
 
-    // Obtener viajes por conductor como Flow (observable)
+    // Obtener viajes por conductor como Flow
     fun getViajesByConductorAsFlow(conductorId: Long): Flow<List<Viaje>> {
         return viajeDao.getViajesByConductorAsFlow(conductorId)
     }
 
-    // NUEVA: Obtener viajes por conductor como List (suspend - carga única)
+    // Obtener viajes por conductor como List (suspend - carga única)
     suspend fun getViajesByConductor(conductorId: Long): List<Viaje> {
         return viajeDao.getViajesByConductor(conductorId)
     }
@@ -75,7 +75,6 @@ class ViajeRepository(private val viajeDao: ViajeDao) {
         viajeDao.updateConductorNameInViajes(userId, newName)
     }
 
-    // Añade esta función
     fun searchViajesFiltrados(
         origen: String,
         destino: String,
@@ -95,7 +94,6 @@ class ViajeRepository(private val viajeDao: ViajeDao) {
         return viajeDao.hasOverlappingRide(conductorId, fechaSalida, horaSalida, horaLlegada)
     }
 
-    // En ViajeRepository.kt
 
     suspend fun updateCompletedViajes(fechaActual: String, horaActual: String) {
         viajeDao.updateCompletedViajes(fechaActual, horaActual)

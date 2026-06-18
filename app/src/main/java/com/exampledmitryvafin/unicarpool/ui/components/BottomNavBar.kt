@@ -22,7 +22,6 @@ fun BottomNavBar(
     navController: NavController
 ) {
     val items = listOf(
-
         BottomNavItem(Destinations.Search.route, "Buscar", Icons.Default.Search),
         BottomNavItem(Destinations.Create.route, "Crear", Icons.Default.Add),
         BottomNavItem(Destinations.MyRides.route, "Mis Viajes", Icons.Default.DateRange),
@@ -37,7 +36,6 @@ fun BottomNavBar(
                 selected = currentRoute == item.route,
                 onClick = {
                     navController.navigate(item.route) {
-                        // Evitar duplicados en el historial
                         popUpTo(Destinations.Search.route) {
                             saveState = true
                         }

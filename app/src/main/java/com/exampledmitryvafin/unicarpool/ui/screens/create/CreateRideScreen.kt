@@ -24,18 +24,16 @@ fun CreateRideScreen(
     currentUserName: String,
     onRideCreated: () -> Unit
 ) {
-    // Crear ViewModel con dependencias
     val context = LocalContext.current
     val database = com.exampledmitryvafin.unicarpool.data.database.AppDatabase.getInstance(context)
     val viajeRepository = com.exampledmitryvafin.unicarpool.repository.ViajeRepository(database.viajeDao())
-    val participacionRepository = ParticipacionRepository(database.participacionDao())  // NUEVO
+    val participacionRepository = ParticipacionRepository(database.participacionDao())
     val focusManager = LocalFocusManager.current
 
     val viewModel: CreateRideViewModel = viewModel(
         factory = CreateRideViewModelFactory(viajeRepository, participacionRepository, currentUserId, currentUserName)
     )
 
-    // Observar estados
     val origen by viewModel.origen.collectAsState()
     val destino by viewModel.destino.collectAsState()
     val fechaSalida by viewModel.fechaSalida.collectAsState()
@@ -64,7 +62,6 @@ fun CreateRideScreen(
     var errorPlazas by remember { mutableStateOf<String?>(null) }
     var errorPrecio by remember { mutableStateOf<String?>(null) }
 
-    // Observar cambios en errorMessage
     LaunchedEffect(errorMessage) {
         if (errorMessage != null && errorMessage!!.isNotBlank()) {
             currentErrorMessage = errorMessage!!
@@ -72,7 +69,6 @@ fun CreateRideScreen(
         }
     }
 
-    // Diálogo de error (con más visibilidad)
     if (showError) {
         AlertDialog(
             onDismissRequest = {
@@ -101,7 +97,6 @@ fun CreateRideScreen(
         )
     }
 
-    // Navegar cuando el viaje se crea correctamente
     LaunchedEffect(success) {
         if (success) {
             viewModel.resetSuccess()
@@ -109,14 +104,12 @@ fun CreateRideScreen(
         }
     }
 
-    // Mostrar error si existe
     LaunchedEffect(errorMessage) {
         if (errorMessage != null) {
             showError = true
         }
     }
 
-    // Mostrar DatePicker cuando se solicita
     if (showDatePickerSalida) {
         DatePickerDialog { date ->
             viewModel.updateFechaSalida(date)
@@ -145,7 +138,6 @@ fun CreateRideScreen(
         }
     }
 
-    // Diálogo de error
     if (showError && errorMessage != null) {
         AlertDialog(
             onDismissRequest = {
@@ -165,7 +157,6 @@ fun CreateRideScreen(
         )
     }
 
-    // Formulario
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -178,7 +169,6 @@ fun CreateRideScreen(
             style = MaterialTheme.typography.headlineMedium
         )
 
-        // Origen
         OutlinedTextField(
             value = origen,
             onValueChange = { viewModel.updateOrigen(it)
@@ -196,7 +186,6 @@ fun CreateRideScreen(
             singleLine = true
         )
 
-        // Destino
         OutlinedTextField(
             value = destino,
             onValueChange = { viewModel.updateDestino(it)
@@ -315,7 +304,6 @@ fun CreateRideScreen(
             )
         }
 
-        // Plazas
         OutlinedTextField(
             value = plazas,
             onValueChange = { viewModel.updatePlazas(it)
@@ -335,7 +323,6 @@ fun CreateRideScreen(
             )
         )
 
-        // Precio
         OutlinedTextField(
             value = precio,
             onValueChange = { viewModel.updatePrecio(it)
@@ -355,10 +342,8 @@ fun CreateRideScreen(
             )
         )
 
-        // Botón de publicar
         Button(
             onClick = {
-                // Reiniciar errores
                 errorOrigen = null
                 errorDestino = null
                 errorFechaSalida = null
@@ -396,7 +381,6 @@ fun CreateRideScreen(
                     errorHoraSalida = "La hora de salida no puede ser anterior a la hora de llegada"
                     hasError = true
                 }
-                // Fecha llegada
                 if (fechaLlegada.isBlank()) {
                     errorFechaLlegada = "La fecha de llegada es obligatoria"
                     hasError = true
@@ -407,18 +391,15 @@ fun CreateRideScreen(
                     hasError = true
                 }
 
-                // Hora llegada
                 if (horaLlegada.isBlank()) {
                     errorHoraLlegada = "La hora de llegada es obligatoria"
                     hasError = true
                 }
-                // Plazas
                 val plazasInt = plazas.toIntOrNull()
                 if (plazasInt == null || plazasInt < 1) {
                     errorPlazas = "Debe ser un número mayor o igual a 1"
                     hasError = true
                 }
-                // Precio
                 val precioDouble = precio.toDoubleOrNull()
                 if (precioDouble == null || precioDouble < 0) {
                     errorPrecio = "Debe ser un número mayor o igual a 0"
@@ -426,10 +407,9 @@ fun CreateRideScreen(
                 }
 
                 if (!hasError) {
-                    focusManager.clearFocus() // Force keyboard to close
+                    focusManager.clearFocus()
                     viewModel.createRide { success, message ->
                         if (!success) {
-                            // Si el ViewModel detecta otro error (ej. solapamiento), mostrarlo en un diálogo o Toast
                             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                         }
                     }

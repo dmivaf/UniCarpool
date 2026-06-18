@@ -51,10 +51,8 @@ fun MyRidesScreen(
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("📌 Activos", "📜 Historial")
 
-    // Filtro para activos (Todos, Conductor, Pasajero)
     var filterRole by remember { mutableStateOf<RideRole?>(null) }
 
-    // Mostrar errores
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -81,8 +79,7 @@ fun MyRidesScreen(
         }
 
         when (selectedTab) {
-            0 -> { // Activos
-                // Filtro de tipo
+            0 -> {
                 Row(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -143,7 +140,7 @@ fun MyRidesScreen(
                     }
                 }
             }
-            1 -> { // Historial (solo completados)
+            1 -> {
                 if (historyRides.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("No hay viajes completados")
@@ -253,7 +250,6 @@ fun SwipeToDeleteCard(
             .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
     ) {
-        // Fondo rojo para el swipe
         Box(
             modifier = Modifier
                 .matchParentSize()
@@ -268,7 +264,6 @@ fun SwipeToDeleteCard(
             )
         }
 
-        // Tarjeta deslizable
         Card(
             modifier = Modifier
                 .fillMaxWidth()
